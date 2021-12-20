@@ -35,7 +35,7 @@ const userCtrl = {
       const newUser = { name, email, password: passwordHash };
       const activation_token = createActivationToken(newUser);
       const url = `${CLIENT_URL}/user/activate/${activation_token}`;
-      sendMail(email, url);
+      sendMail(email, url, "Verify your email");
 
       res.json({
         msg: "User Registered Success! Please activate your email to start.!",
@@ -121,9 +121,100 @@ const userCtrl = {
         if (err) {
           return res.status(401).json({ msg: "Invalid refresh token." });
         }
-        const access_token = createAccessToken({ id: user._id });
+        const access_token = createAccessToken({ id: user.id });
         res.json({ access_token });
       });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Forget Password
+  forgetPassword: async (req, res) => {
+    try {
+      const { email } = req.body;
+      // Check If email is registered
+      const user = await Users.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ masg: "User not registered." });
+      }
+      const access_token = createAccessToken({ id: user._id });
+      const url = `${CLIENT_URL}/user/reset/${access_token}`;
+      sendMail(email, url, "Reset your password");
+      res.json({ msg: "Email sent successfully. Please Check Your Email.!" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Reset Password
+  resetPassword: async (req, res) => {
+    try {
+      const { password } = req.body;
+      const passwordHash = await bcrypt.hash(password, 12);
+
+      await Users.findOneAndUpdate(
+        {
+          _id: req.user.id,
+        },
+        {
+          password: passwordHash,
+        }
+      );
+      res.json({ msg: "Password Reset Successfully!" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Get User  Info
+  getUserInfo: async (req, res) => {
+    try {
+      const user = await Users.findById(req.user.id).select("-password");
+      res.json({ user });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Get All Users Information As Admin
+  getUsersAllInfo: async (req, res) => {
+    try {
+      console.log(req.user);
+      const users = await Users.find().select("-password");
+      res.json(users);
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Logoin User
+  logout: async (req, res) => {
+    try {
+      res.clearCookie("refreshtoken", { path: "/user/refresh_token" });
+      res.json({ msg: "Logout Success!" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Update User Info
+  updateUser: async (req, res) => {
+    try {
+      const { name, avatar } = req.body;
+      await Users.findOneAndUpdate({ _id: req.user.id }, { name, avatar });
+      res.json({ msg: "User Updated Successfully!" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  //! Update User Permission
+  updateUsersRole: async (req, res) => {
+    try {
+      const { role } = req.body;
+      await Users.findOneAndUpdate({ _id: req.user.id }, { role });
+      res.json({ msg: "User Updated Successfully!" });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
     }

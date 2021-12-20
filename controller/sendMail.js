@@ -18,7 +18,7 @@ const oauth2Client = new OAuth2(
 );
 
 //! Send email
-const sendEmail = (to, url) => {
+const sendEmail = (to, url, txt) => {
   oauth2Client.setCredentials({
     refresh_token: MAILING_SERVICE_REFRESH_TOKEN,
   });
@@ -38,7 +38,7 @@ const sendEmail = (to, url) => {
     from: SENDER_EMAIL_ADDRESS,
     to: to,
     subject: "Confirm your email",
-    html: `<p>Please confirm your email by clicking <a href="${url}">here</a></p>`,
+    html: `<p>Please confirm your email by clicking <a href="${url}">here</a>${txt}</p>`,
   };
   smtpTransport.sendMail(mailOptions, (error, response) => {
     if (error) return error;
