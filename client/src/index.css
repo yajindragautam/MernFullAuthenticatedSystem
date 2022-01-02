@@ -33,3 +33,5 @@ button{
 }
 /* -----  Header  ----- */
 @import url("./components/header/header.css");
+/* -----  Header  ----- */
+@import url("./components/body/auth/auth.css");
