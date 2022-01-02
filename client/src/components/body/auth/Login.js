@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import{Link} from 'react-router-dom'
 
 const initialState = {
   email: "",
@@ -10,26 +10,28 @@ const initialState = {
 
 function Login() {
   const [user, setUser] = useState(initialState);
+
   const { email, password, err, success } = user;
 
   const handleChangeInput = (e) => {
-    const { name, value } = e.target.value;
-    setUser({ ...user, [name]:value, err: "", success: "" });
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value, err: "", success: "" });
   };
 
   return (
     <div className="login_page">
       <h2>Login</h2>
+
       <form>
         <div>
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Email Address</label>
           <input
             type="text"
-            placeholder="Enter your email"
+            placeholder="Enter email address"
             id="email"
-            value={this.user.email}
+            value={email}
             name="email"
-            onchange={(e) => handleChangeInput(e)}
+            onChange={handleChangeInput}
           />
         </div>
 
@@ -37,19 +39,25 @@ function Login() {
           <label htmlFor="password">Password</label>
           <input
             type="password"
-            id="password"
-            name="password"
-            value={password}
             placeholder="Enter password"
-            //onchange={handleChangeInput}
+            id="password"
+            value={password}
+            name="password"
+            onChange={handleChangeInput}
           />
         </div>
 
         <div className="row">
           <button type="submit">Login</button>
-          <Link to="/forget_password">Forget Password</Link>
+          <Link to="/forgot_password">Forgot your password?</Link>
         </div>
       </form>
+
+      <div className="hr">Or Login With</div>
+
+      <p>
+        New Customer? <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 }
