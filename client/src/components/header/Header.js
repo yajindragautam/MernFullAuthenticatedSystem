@@ -13,13 +13,13 @@ function Header() {
         <ul>
           <li>
             <Link to="/">
-              <i class="fas fa-shopping-cart"></i> Cart
+              <i className="fas fa-shopping-cart"></i> Cart
             </Link>
           </li>
 
           <li>
             <Link to="/login">
-              <i class="fas fa-user"></i> Sign In
+              <i className="fas fa-user"></i> Sign In
             </Link>
           </li>
         </ul>

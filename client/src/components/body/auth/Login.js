@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import{Link} from 'react-router-dom'
+import { Link} from "react-router-dom";
+import axios from "axios";
+import {
+  showErrMsg,
+  showSuccessMsg,
+} from "../../utils/notification/Notification";
 
 const initialState = {
   email: "",
@@ -18,11 +23,26 @@ function Login() {
     setUser({ ...user, [name]: value, err: "", success: "" });
   };
 
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('/user/login',{email, password});
+      console.log(res);
+     // setUser({ ...user, err: "", success: res.data.msg });
+    } catch (err) {
+      err.response.data.msg &&
+        setUser({ ...user, err: err.response.data.msg, success: "" });
+    }
+  };
+
+
   return (
     <div className="login_page">
       <h2>Login</h2>
+      {err && showErrMsg(err)}
+      {success && showSuccessMsg(success)}
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email Address</label>
           <input
@@ -54,6 +74,8 @@ function Login() {
       </form>
 
       <div className="hr">Or Login With</div>
+
+
 
       <p>
         New Customer? <Link to="/register">Register</Link>
